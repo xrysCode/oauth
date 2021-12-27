@@ -1,0 +1,17 @@
+server:
+  port: 9000
+
+spring:
+  security:
+    user:
+#      name:
+      password: 1234
+
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          client-secret:
+
+      client:
+        provider:
+

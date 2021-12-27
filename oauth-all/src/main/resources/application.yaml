@@ -1,0 +1,9 @@
+#  http://localhost:8080/oauth/authorize?client_id=clientapp&response_type=code&scope=read_user_info
+server:
+  port: 8080
+#security:
+#  oauth2:
+#    authorization:
+#      token-key-access:
+#    client:
+#      authorized-grant-types:
