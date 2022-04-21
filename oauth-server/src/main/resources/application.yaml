@@ -1,3 +1,30 @@
 server:
-  port: 8080
+  port: 9000
+# 测试
+#security:
+#  oauth2:
+#    authorization:
+#      check-token-access:
 
+
+#security:
+#  oauth2:
+#    sso:
+#      login-path: /user/login.html
+#      filter-order:
+#    authorization:
+#      realm:
+#security:
+
+#spring:
+#  security:
+#    filter:
+#      dispatcher-types:
+#spring:
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          test:
+#            client-id: google-client-id
+#            client-secret: google-client-secret

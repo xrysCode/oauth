@@ -7,7 +7,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +19,10 @@ import java.util.List;
 public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("登录用户："+username);
+        ServletRequestAttributes attrs = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attrs.getRequest();
+
+        System.out.println("登录用户："+username+"   ********"+request.getRequestURI());
         SimpleGrantedAuthority role1 = new SimpleGrantedAuthority("role1");
         List<SimpleGrantedAuthority> list = new ArrayList<>();
         list.add(role1);

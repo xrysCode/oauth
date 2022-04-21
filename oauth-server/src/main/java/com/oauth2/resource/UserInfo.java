@@ -1,55 +1,59 @@
 package com.oauth2.resource;
 
-/**
- * @ClassName: User
- * @Description:TODO(这里用一句话描述这个类的作用)
- * @author: wanghao
- * @date: 2019年8月15日 下午1:25:36
- * @version V1.0
- * 
- */
-public class UserInfo {
+import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+@Data
+public class UserInfo implements UserDetails {
 	private String name;
 	private String email;
+	String password;
 
-	/**
-	 * @Title: getName <BR>
-	 * @Description: please write your description <BR>
-	 * @return: String <BR>
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @Title: setName <BR>
-	 * @Description: please write your description <BR>
-	 * @return: String <BR>
-	 */
-	public void setName(String name) {
+	public UserInfo(String name, String email,String password) {
 		this.name = name;
-	}
-
-	/**
-	 * @Title: getEmail <BR>
-	 * @Description: please write your description <BR>
-	 * @return: String <BR>
-	 */
-	public String getEmail() {
-		return email;
-	}
-
-	/**
-	 * @Title: setEmail <BR>
-	 * @Description: please write your description <BR>
-	 * @return: String <BR>
-	 */
-	public void setEmail(String email) {
 		this.email = email;
+		this.password=password;
 	}
 
 	@Override
-	public String toString() {
-		return "User [name=" + name + ", email=" + email + "]";
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		ArrayList<GrantedAuthority> list = new ArrayList<>();
+		list.add(()->"GrantedAuthority");
+		list.add(()->"abc");
+		return list;
+	}
+
+	@Override
+	public String getPassword() {
+		return password;
+	}
+
+	@Override
+	public String getUsername() {
+		return name;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 }
