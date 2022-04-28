@@ -19,6 +19,9 @@ public class OauthApplication {
         run = SpringApplication.run(OauthApplication.class, args);
         System.out.println("----");
     }
-
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }
