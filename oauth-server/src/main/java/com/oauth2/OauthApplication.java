@@ -20,5 +20,8 @@ public class OauthApplication {
         System.out.println("----");
     }
 
-
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

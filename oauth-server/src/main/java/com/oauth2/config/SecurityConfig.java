@@ -27,10 +27,7 @@ import java.util.Collection;
 @Order(1)
 @EnableWebSecurity(debug = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -43,12 +40,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()//.httpBasic()
 				.formLogin()
 				///*"http://localhost:3000" */ /*"/user/login.html"*/"login.html"
-				.loginPage("/user/login")
+//				.loginPage("/user/login")
 				//.failureUrl("/error")
 //				.successForwardUrl("")
 //				.failureForwardUrl("")
 //				.usernameParameter("account")
-				.loginProcessingUrl("/user/login")
+//				.loginProcessingUrl("/user/login")
 
 				.permitAll()
 				;
