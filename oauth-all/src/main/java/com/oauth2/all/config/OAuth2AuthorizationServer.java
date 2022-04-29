@@ -19,7 +19,8 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
             throws Exception {
         //Spring Security OAuth2会公开了两个端点，用于检查令牌（/oauth/check_token和/oauth/token_key），
         // 这些端点默认受保护denyAll()。tokenKeyAccess（）和checkTokenAccess（）方法会打开这些端点以供使用。
-        security.tokenKeyAccess("permitAll()")
+        security
+                .tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()")
                 .allowFormAuthenticationForClients();
     }
@@ -32,13 +33,14 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
                 .inMemory().withClient("clientapp")
                 .secret(passwordEncoder.encode("1234"))//$2a$10$WvsS0sT/JiD9hsPhh45hoOmrZYCerSdD3OhaUXC73SonfWvlhonVK
                 //authorization_code，password，client_credentials，implicit，或refresh_token。
-                .authorizedGrantTypes(/*"password", "authorization_code","refresh_token",*/"client_credentials"/*,"implicit"*/)
+                .authorizedGrantTypes("password", "authorization_code","refresh_token","client_credentials"/*,"implicit"*/)
                 .authorities("READ_ONLY_CLIENT")
                 .scopes("read_user_info")
                 .resourceIds("oauth2-resource")//authorities - 授予客户的权限（常规Spring Security权限）。
                 .redirectUris("http://localhost:8081/login")//redirectUris - 将用户代理重定向到客户端的重定向端点。它必须是绝对URL。
                 .accessTokenValiditySeconds(50000)
                 .refreshTokenValiditySeconds(50000)
+                .autoApprove(true)
 //                .and()
 //                .withClient()
 
