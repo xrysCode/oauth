@@ -19,9 +19,9 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
             throws Exception {
         //Spring Security OAuth2会公开了两个端点，用于检查令牌（/oauth/check_token和/oauth/token_key），
         // 这些端点默认受保护denyAll()。tokenKeyAccess（）和checkTokenAccess（）方法会打开这些端点以供使用。
-//        security.tokenKeyAccess("denyAll()")//isAuthenticated
-//                .checkTokenAccess("denyAll()")
-//                .allowFormAuthenticationForClients();
+        security.tokenKeyAccess("permitAll()")
+                .checkTokenAccess("isAuthenticated()")
+                .allowFormAuthenticationForClients();
     }
 
     @Override
@@ -39,8 +39,6 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
                 .redirectUris("http://localhost:8081/login")//redirectUris - 将用户代理重定向到客户端的重定向端点。它必须是绝对URL。
                 .accessTokenValiditySeconds(50000)
                 .refreshTokenValiditySeconds(50000)
-        .autoApprove(true)
-
 //                .and()
 //                .withClient()
 

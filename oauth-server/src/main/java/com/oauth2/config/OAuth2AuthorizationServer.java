@@ -12,11 +12,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+
+import java.util.ArrayList;
 
 @Configuration
 @EnableAuthorizationServer
@@ -29,11 +29,14 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
             throws Exception {
         //Spring Security OAuth2会公开了两个端点，用于检查令牌（/oauth/check_token和/oauth/token_key），
         // 这些端点默认受保护denyAll()。tokenKeyAccess（）和checkTokenAccess（）方法会打开这些端点以供使用。
-        security.tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()")
-                .allowFormAuthenticationForClients()
+        security
+//                .tokenKeyAccess("permitAll()")
+                .tokenKeyAccess("isAuthenticated()")//获取秘钥需要身份认证，使用单点登录时必须配置
+//                .checkTokenAccess("isAuthenticated()")
+//                .allowFormAuthenticationForClients()
 
         ;
+//        security.tokenKeyAccess("isAuthenticated()");
     }
 
     @Override
@@ -48,7 +51,7 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
                 .authorities("READ_ONLY_CLIENT")
                 .scopes("read_user_info")
                 .resourceIds("oauth2-resource")//authorities - 授予客户的权限（常规Spring Security权限）。
-                .redirectUris("http://localhost:8081/login",
+                .redirectUris("http://localhost:9001/login",
                         "http://localhost:8989/**"
                 )//redirectUris - 将用户代理重定向到客户端的重定向端点。它必须是绝对URL。
                 .additionalInformation("a:aa","bb")
@@ -75,11 +78,24 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         super.configure(endpoints);
+        ArrayList<TokenEnhancer> tokenEnhancers = new ArrayList<>();
+        tokenEnhancers.add(myTokenEnhancer());
+        tokenEnhancers.add(accessTokenConverter());
+        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+        tokenEnhancerChain.setTokenEnhancers(tokenEnhancers);
+
         endpoints.tokenStore(tokenStore())
+                .tokenEnhancer(tokenEnhancerChain)
                 .accessTokenConverter(accessTokenConverter())//.setClientDetailsService()
+
 //                .tok
                 .userDetailsService(userDetailsService1)
         ;
+    }
+
+    @Bean
+    public MyTokenEnhancer myTokenEnhancer(){
+       return new MyTokenEnhancer();
     }
 
     @Bean

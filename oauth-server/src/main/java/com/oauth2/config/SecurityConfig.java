@@ -28,7 +28,8 @@ import java.util.Collection;
 @EnableWebSecurity(debug = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
+//	@Autowired
+//	BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.antMatcher("/**")

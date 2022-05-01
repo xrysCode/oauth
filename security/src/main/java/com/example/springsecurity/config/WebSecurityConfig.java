@@ -47,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         HttpSecurity http1 = http.authorizeRequests()
-                .antMatchers("/", "/home","/*/login.html")
+                .antMatchers( "/home")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -55,26 +55,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and();
 
         FormLoginConfigurer<HttpSecurity> formLoginConfigurer = http1.formLogin()
-                .loginPage("/{frontOrBack}/login.html")
-                .loginProcessingUrl("/{frontOrBack}/login-check")
-                .failureUrl("/user/login?error=failureUrl")
-                .failureForwardUrl("/user/login?error=failureForwardUrl")
-                .successForwardUrl("/success?successForwardUrl")
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+//                .successHandler()
+//                .failureHandler()
+//                .failureUrl("/user/login?error=failureUrl")
+//                .failureForwardUrl("/user/login?error=failureForwardUrl")
+//                .successForwardUrl("/success?successForwardUrl")
                 .permitAll();
-        formLoginConfigurer.addObjectPostProcessor(new ObjectPostProcessor<LoginUrlAuthenticationEntryPoint>() {
-                    @Override
-                    public LoginUrlAuthenticationEntryPoint postProcess(LoginUrlAuthenticationEntryPoint point) {
-                        MyLoginUrlAuthenticationEntryPoint authenticationEntryPoint = new MyLoginUrlAuthenticationEntryPoint(point.getLoginFormUrl());
-                        BeanUtil.copyProperties(point,authenticationEntryPoint);
-                        return authenticationEntryPoint;
-                    }
-                });
+//        formLoginConfigurer.addObjectPostProcessor(new ObjectPostProcessor<LoginUrlAuthenticationEntryPoint>() {
+//                    @Override
+//                    public LoginUrlAuthenticationEntryPoint postProcess(LoginUrlAuthenticationEntryPoint point) {
+//                        MyLoginUrlAuthenticationEntryPoint authenticationEntryPoint = new MyLoginUrlAuthenticationEntryPoint(point.getLoginFormUrl());
+//                        BeanUtil.copyProperties(point,authenticationEntryPoint);
+//                        return authenticationEntryPoint;
+//                    }
+//                });
         HttpSecurity http2 = formLoginConfigurer.and();
         http2.logout()
                 .permitAll()
 
         ;
-
+        http2.csrf().disable();
     }
 
 
