@@ -1,12 +1,15 @@
-package com.oauth2.all;
+package client;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * OAuth2.0 Client Application
+ * @author felord.cn
+ */
 @SpringBootApplication
-//@EnableOAuth2Resource
-public class OauthAllOldApplication {
+public class OAuth2ClientApplication {
     public static void main(String[] args) {
-        SpringApplication.run(OauthAllOldApplication.class,args);
+        SpringApplication.run(OAuth2ClientApplication.class, args);
     }
 }
