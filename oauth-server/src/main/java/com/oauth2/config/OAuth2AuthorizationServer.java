@@ -51,7 +51,7 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
                 .authorities("READ_ONLY_CLIENT")
                 .scopes("read_user_info")
                 .resourceIds("oauth2-resource")//authorities - 授予客户的权限（常规Spring Security权限）。
-                .redirectUris("http://localhost:9001/login",
+                .redirectUris("http://localhost:9001/login","http://localhost:8080/foo/bar",
                         "http://localhost:8989/**"
                 )//redirectUris - 将用户代理重定向到客户端的重定向端点。它必须是绝对URL。
                 .additionalInformation("a:aa","bb")

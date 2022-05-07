@@ -1,6 +1,11 @@
 #  http://localhost:8080/oauth/authorize?client_id=clientapp&response_type=code&scope=read_user_info
 server:
-  port: 8080
+  port: 9000
+
+  servlet:
+    session:
+      cookie:
+        name: server-cookie
 #security:
 #  oauth2:
 #    authorization:
