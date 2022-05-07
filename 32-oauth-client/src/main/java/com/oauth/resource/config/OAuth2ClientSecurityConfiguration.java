@@ -1,4 +1,4 @@
-package client.config;
+package com.oauth.resource.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -11,8 +11,8 @@ import org.springframework.security.web.SecurityFilterChain;
  *
  * @author felord.cn
  */
-//@EnableWebSecurity(debug = true)
-public class OAuth2ClientSecurityConfiguration2 {
+@EnableWebSecurity(debug = true)
+public class OAuth2ClientSecurityConfiguration {
 
 
     /**
@@ -28,26 +28,8 @@ public class OAuth2ClientSecurityConfiguration2 {
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.GET,"/foo/bar").anonymous()
                 .anyRequest().authenticated()
-
-
                 .and()
-                .oauth2Login()
-//                .loginProcessingUrl("/login/oauth2/code/clientapp")
-                .userInfoEndpoint(userInfoEndpointConfig -> {
-                    System.out.println(userInfoEndpointConfig);
-                })
-
-//                .and()
-//                .oauth2Client()
-//                .and()
-//                .a("").
-//                .oauth2Login()
-//                .and()
-//                .oauth2ResourceServer()
-//                .and()
-//                .formLogin()
-//                .loginProcessingUrl()
-        ;
+                .oauth2Client();
         return httpSecurity.build();
     }
 }
