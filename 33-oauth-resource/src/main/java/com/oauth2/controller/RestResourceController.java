@@ -19,30 +19,24 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 public class RestResourceController {
 
-	@Autowired
-	UserDetailsService userDetailsService;
+//	@Autowired
+//	UserDetailsService userDetailsService;
 
-	@RequestMapping("/api/users/me")
-	public ResponseEntity<UserDetails> profile() {
-		SecurityContext context = SecurityContextHolder.getContext();
-		Authentication authentication = context.getAuthentication();
-		String principal = (String) authentication.getPrincipal();
-//		User user = (User) authentication.getPrincipal();
-		UserDetails userDetails = userDetailsService.loadUserByUsername(principal);
+	@RequestMapping("/resource")
+	@ResponseBody
+	public ResponseEntity<HashMap<String, Object>> profile() {
+//		SecurityContext context = SecurityContextHolder.getContext();
+//		Authentication authentication = context.getAuthentication();
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("resource","资源");
 
-
-//		String email = user.getUsername() + "@126.com";
-
-//		UserInfo profile = new UserInfo();
-//		profile.setName(user.getUsername());
-//		profile.setEmail(email);
-
-		return ResponseEntity.ok(userDetails);
+		return ResponseEntity.ok(map);
 	}
 //	@GetMapping("/login")
 //	public String login() {
@@ -53,15 +47,6 @@ public class RestResourceController {
 //		return "login.html";
 //	}
 
-	@Autowired
-	UserService userService;
-
-	@PostMapping("/user/login")
-	public UserDetails login(String username, String password,String other) {
-		UserDetails userDetails = userService.loadUserByUsername(username);
-
-		return userDetails;
-	}
 
 	@Autowired
 	RequestMappingHandlerMapping requestMappingHandlerMapping;

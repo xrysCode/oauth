@@ -9,6 +9,10 @@ spring:
         trace: true
 server:
   port: 9050
+  servlet:
+    session:
+      cookie:
+        name: server2
 # 方便调试
 logging:
   level:

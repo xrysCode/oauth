@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * @Author xry
  * @Date 2022/4/21 15:19
  */
-@Service
+//@Service
 public class UserService implements UserDetailsService {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;

@@ -16,7 +16,7 @@ import java.util.Map;
 public class FooController {
 
     @GetMapping("/bar")
-    public Map<String,Object> bar(@RegisteredOAuth2AuthorizedClient("felord") OAuth2AuthorizedClient client){
+    public Map<String,Object> bar(@RegisteredOAuth2AuthorizedClient("clientapp") OAuth2AuthorizedClient client){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Map<String, Object> map = new HashMap<>();
         map.put("authentication",authentication);

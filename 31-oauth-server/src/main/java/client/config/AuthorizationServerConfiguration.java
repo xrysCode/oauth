@@ -38,9 +38,19 @@ import java.util.UUID;
 /**
  * The type Authorization server configuration.
  */
-@Configuration(proxyBeanMethods = false)
+//@Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfiguration {
 
+    /**
+     * 配置 OAuth2.0 provider元信息
+     *
+     * @return the provider settings
+     */
+//    @Bean
+    public ProviderSettings providerSettings(@Value("${server.port}") Integer port) {
+        //TODO 生产应该使用域名
+        return ProviderSettings.builder().issuer("http://localhost:" + port).build();
+    }
     /**
      * Authorization server 集成
      *
@@ -96,9 +106,9 @@ public class AuthorizationServerConfiguration {
      * @param jdbcTemplate the jdbc template
      * @return the registered client repository
      */
-    /*@SneakyThrows
-    @Bean
-    public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
+    @SneakyThrows
+//    @Bean
+    public RegisteredClientRepository registeredClientRepository() {//JdbcTemplate jdbcTemplate
         // TODO 生产上 注册客户端需要使用接口 不应该采用下面的方式
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
 //               客户端ID和密码
@@ -129,11 +139,12 @@ public class AuthorizationServerConfiguration {
                 .build();
 
 //         每次都会初始化  生产的话 只初始化JdbcRegisteredClientRepository
-        JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
-//TODO        return registeredClientRepository;
-        registeredClientRepository.save(registeredClient);
-        return registeredClientRepository;
-    }*/
+//        JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
+////TODO        return registeredClientRepository;
+//        registeredClientRepository.save(registeredClient);
+//        return registeredClientRepository;
+        return null;
+    }
 
     /**
      * 授权服务
@@ -165,7 +176,7 @@ public class AuthorizationServerConfiguration {
      * @return the jwk source
      */
     @SneakyThrows
-    @Bean
+//    @Bean
     public JWKSource<SecurityContext> jwkSource() {
         //TODO 这里优化到配置
         String path = "felordcn.jks";
@@ -182,16 +193,7 @@ public class AuthorizationServerConfiguration {
         return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
     }
 
-    /**
-     * 配置 OAuth2.0 provider元信息
-     *
-     * @return the provider settings
-     */
-//    @Bean
-//    public ProviderSettings providerSettings(@Value("${server.port}") Integer port) {
-//        //TODO 生产应该使用域名
-//        return ProviderSettings.builder().issuer("http://localhost:" + port).build();
-//    }
+
 
 
     /**

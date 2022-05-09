@@ -1,30 +1,30 @@
-server:
-  port: 8080
-# 测试
-#security:
-#  oauth2:
-#    authorization:
-#      check-token-access:
 
-
-#security:
-#  oauth2:
-#    sso:
-#      login-path: /user/login.html
-#      filter-order:
-#    authorization:
-#      realm:
-#security:
-
-#spring:
-#  security:
-#    filter:
-#      dispatcher-types:
-#spring:
-#  security:
-#    oauth2:
+spring:
+  security:
+    oauth2:
 #      client:
 #        registration:
-#          test:
-#            client-id: google-client-id
-#            client-secret: google-client-secret
+#          clientapp:
+#            client-id: clientapp
+#            client-secret: 1234
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9050
+          jwk-set-uri: http://localhost:9050/oauth2/jwks
+#        opaquetoken:
+#          client-id: clientapp
+#          client-secret: 1234
+
+
+# 方便调试
+logging:
+  level:
+    org.springframework.web: trace
+    org.springframework.security: debug
+    org.springframework.security.oauth2: debug
+server:
+  port: 9052
+  servlet:
+    session:
+      cookie:
+        name: resource
