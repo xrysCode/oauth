@@ -19,3 +19,5 @@ logging:
     org.springframework.web: trace
     org.springframework.security: debug
     org.springframework.security.oauth2: debug
+
+#  keytool.exe -genkeypair -alias oauthJwt -keyalg RSA -keypass 123456  -storepass 111111  -keyalg RSA -keysize 2048  -validity 3650  -keystore oauthJwt.jks

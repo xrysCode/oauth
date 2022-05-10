@@ -1,44 +1,34 @@
-package client.config;
+package server.config;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.server.authorization.JwtEncodingContext;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-
+import server.dto.MyUser;
 import java.security.KeyStore;
 
 
@@ -57,7 +47,8 @@ public class AuthorizationServerConfiguration2 extends OAuth2AuthorizationServer
 //                .passwordEncoder(PasswordEncoderFactories.createDelegatingPasswordEncoder()::encode)
                 .roles("r_User")
                 .build();
-        return new InMemoryUserDetailsManager(user);
+        MyUser myUser = new MyUser("user", passwordEncoder.encode("123"), "xxxx@163.com");
+        return new InMemoryUserDetailsManager(myUser);
     }
 
     @Bean
@@ -70,34 +61,9 @@ public class AuthorizationServerConfiguration2 extends OAuth2AuthorizationServer
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-
         http
-//                .authorizeRequests().anyRequest().authenticated()
-//                .and()
                 .formLogin()
                 ;
-        //http.antMatcher("/**")
-        //				.requestMatchers()
-        //				.antMatchers("/oauth/authorize**", "/login**", "/error**")
-        // 开启form登录
-
-//        http
-//                .authorizeRequests().anyRequest().authenticated();
-
-
-//        http.antMatcher("/**").requestMatchers().anyRequest()
-//
-//                .and()
-//                .formLogin()
-////                .loginPage("/login")
-//        .and()
-//        .logout();
-
-//        http.authorizeRequests().anyRequest().authenticated()
-//                .and()
-//                .formLogin()
-//                .and()
-//                .httpBasic();
 
         return http.build();
     }
@@ -157,16 +123,14 @@ public class AuthorizationServerConfiguration2 extends OAuth2AuthorizationServer
     @SneakyThrows
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
-        //TODO 这里优化到配置
-        String path = "felordcn.jks";
-        String alias = "felordcn";
-        String pass = "123456";
+        String path = "oauthJwt.jks";
+        String alias = "oauthJwt";
 
         ClassPathResource resource = new ClassPathResource(path);
-        KeyStore jks = KeyStore.getInstance("jks");
-        char[] pin = pass.toCharArray();
-        jks.load(resource.getInputStream(), pin);
-        RSAKey rsaKey = RSAKey.load(jks, alias, pin);
+        KeyStore jks = KeyStore.getInstance("jks");//KeyStore.getDefaultType()
+        jks.load(resource.getInputStream(), "111111".toCharArray());
+
+        RSAKey rsaKey = RSAKey.load(jks, alias, "123456".toCharArray());
 
         JWKSet jwkSet = new JWKSet(rsaKey);
         return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);

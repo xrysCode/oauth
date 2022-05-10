@@ -1,4 +1,4 @@
-package client.config;
+package server.config;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -7,7 +7,6 @@ import com.nimbusds.jose.proc.SecurityContext;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -23,7 +22,6 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.server.authorization.*;
-import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
@@ -104,7 +102,7 @@ public class AuthorizationServerConfiguration {
      * 注册一个客户端应用
      *
      * @param jdbcTemplate the jdbc template
-     * @return the registered client repository
+     * @return the registered server repository
      */
     @SneakyThrows
 //    @Bean
@@ -112,7 +110,7 @@ public class AuthorizationServerConfiguration {
         // TODO 生产上 注册客户端需要使用接口 不应该采用下面的方式
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
 //               客户端ID和密码
-                .clientId("felord-client")
+                .clientId("felord-server")
                 .clientSecret("secret")
 //                名称 可不定义
                 .clientName("felord")
@@ -150,7 +148,7 @@ public class AuthorizationServerConfiguration {
      * 授权服务
      *
      * @param jdbcTemplate               the jdbc template
-     * @param registeredClientRepository the registered client repository
+     * @param registeredClientRepository the registered server repository
      * @return the o auth 2 authorization service
      */
 //    @Bean
@@ -162,7 +160,7 @@ public class AuthorizationServerConfiguration {
      * Authorization consent service o auth 2 authorization consent service.
      *
      * @param jdbcTemplate               the jdbc template
-     * @param registeredClientRepository the registered client repository
+     * @param registeredClientRepository the registered server repository
      * @return the o auth 2 authorization consent service
      */
 //    @Bean
@@ -210,7 +208,7 @@ public class AuthorizationServerConfiguration {
 //                .setScriptEncoding("UTF-8")
 //                .addScript("org/springframework/security/oauth2/server/authorization/oauth2-authorization-schema.sql")
 //                .addScript("org/springframework/security/oauth2/server/authorization/oauth2-authorization-consent-schema.sql")
-//                .addScript("org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql")
+//                .addScript("org/springframework/security/oauth2/server/authorization/server/oauth2-registered-server-schema.sql")
 //                .build();
 //        // @formatter:on
 //    }

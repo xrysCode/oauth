@@ -31,7 +31,7 @@
 
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-oauth2-client</artifactId>-->
+<!--            <artifactId>spring-boot-starter-oauth2-server</artifactId>-->
 <!--        </dependency>-->
         <!-- spring mvc  servlet web  必须  -->
         <dependency>

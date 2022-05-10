@@ -10,5 +10,5 @@ server:
 #  oauth2:
 #    authorization:
 #      token-key-access:
-#    client:
+#    server:
 #      authorized-grant-types:

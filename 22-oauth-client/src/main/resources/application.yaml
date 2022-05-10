@@ -3,7 +3,7 @@ server:
   servlet:
     session:
       cookie:
-        name: oauth-client
+        name: oauth-server
 oauth2-server-url: http://localhost:9000
 
 security:

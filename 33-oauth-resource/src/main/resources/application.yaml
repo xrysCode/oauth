@@ -2,18 +2,18 @@
 spring:
   security:
     oauth2:
-#      client:
+#      server:
 #        registration:
 #          clientapp:
-#            client-id: clientapp
-#            client-secret: 1234
+#            server-id: clientapp
+#            server-secret: 1234
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9050
           jwk-set-uri: http://localhost:9050/oauth2/jwks
 #        opaquetoken:
-#          client-id: clientapp
-#          client-secret: 1234
+#          server-id: clientapp
+#          server-secret: 1234
 
 
 # 方便调试
