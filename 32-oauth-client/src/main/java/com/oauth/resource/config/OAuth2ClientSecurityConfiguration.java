@@ -25,14 +25,21 @@ public class OAuth2ClientSecurityConfiguration {
      * @throws Exception the exception
      */
     @Bean
-    SecurityFilterChain oauth2ClientSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable()
+    SecurityFilterChain oauth2ClientSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.GET,"/foo/bar").anonymous()
-                .anyRequest().authenticated()
+                .antMatchers("/user").authenticated()
+                .antMatchers("/").permitAll()
+//                .anyRequest().authenticated()
                 .and()
-                .oauth2Client();
-        return httpSecurity.build();
+                .oauth2Login()
+                .and()
+                .oauth2Client()
+                .and()
+                .logout()
+        ;
+        return http.build();
     }
 
 //    @Bean
