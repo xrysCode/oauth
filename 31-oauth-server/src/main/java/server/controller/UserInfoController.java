@@ -27,13 +27,13 @@ public class UserInfoController {
         return Collections.singletonMap("hello","oauth2.0");
     }
 
-    @GetMapping("/userDetails")
-    @ResponseBody
-    public Object login(HttpServletRequest request){//@RegisteredOAuth2AuthorizedClient("clientapp") OAuth2AuthorizedClient server
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        HttpSession session = request.getSession(false);
-        Object user = ((BearerTokenAuthentication) authentication).getTokenAttributes().get(StandardClaimNames.SUB);
-        Object o = AuthorizationServerConfiguration2.cacheMap.get(user);
-        return o;
-    }
+//    @GetMapping("/userDetails")
+//    @ResponseBody
+//    public Object login(HttpServletRequest request){//@RegisteredOAuth2AuthorizedClient("clientapp") OAuth2AuthorizedClient server
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        HttpSession session = request.getSession(false);
+//        Object user = ((BearerTokenAuthentication) authentication).getTokenAttributes().get(StandardClaimNames.SUB);
+//        Object o = AuthorizationServerConfiguration2.cacheMap.get(user);
+//        return o;
+//    }
 }
