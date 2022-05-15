@@ -4,10 +4,16 @@ import cn.hutool.core.lang.hash.Hash;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.JWSKeySelector;
+import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import lombok.SneakyThrows;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -22,12 +28,17 @@ import org.springframework.security.config.annotation.web.configuration.OAuth2Au
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OidcUserInfoEndpointConfigurer;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2TokenFormat;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -35,14 +46,32 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2AccessTokenGenerator;
+import org.springframework.security.oauth2.server.resource.introspection.NimbusOpaqueTokenIntrospector;
+import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
+import org.springframework.security.oauth2.server.resource.introspection.SpringOpaqueTokenIntrospector;
 import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.client.RestOperations;
+import server.DT_O1.MyUser;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import server.dto.MyUser;
 
 import java.security.KeyPair;
@@ -52,6 +81,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import java.time.Duration;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The type Authorization server configuration.
@@ -113,10 +147,10 @@ public class AuthorizationServerConfiguration2 extends OAuth2AuthorizationServer
 
         http
                 .formLogin()
-                .and()
-                .oauth2ResourceServer().jwt()
                 ;
 
+                ;
+//        http.antMatcher("/login").authorizeHttpRequests().anyRequest().permitAll();
         return http.build();
     }
 
@@ -136,7 +170,18 @@ public class AuthorizationServerConfiguration2 extends OAuth2AuthorizationServer
 
         return http.build();
     }
+//    @Bean
+    OpaqueTokenIntrospector opaqueTokenIntrospector(){
+        return new SpringOpaqueTokenIntrospector("http://localhost:9050/oauth2/introspect","clientapp","1234");
+    }
 
+//    @Bean
+    public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSourc) {
+    //    JWK jwk = new RSAKey.Builder(this.key).privateKey(this.priv).build();
+    //    JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+//        OAuth2AuthorizationServerConfiguration.jwtDecoder()
+        return new NimbusJwtEncoder(jwkSourc);
+    }
     @Bean
     RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder){
         RegisteredClient client = RegisteredClient.withId("1")
@@ -158,13 +203,14 @@ public class AuthorizationServerConfiguration2 extends OAuth2AuthorizationServer
                 .redirectUri("http://127.0.0.1:9051/authorize/oauth2/code/clientapp")
                 .redirectUri("https://baidu.com")
 //                OIDC支持
-                .scope(OidcScopes.OPENID).scope(OidcScopes.EMAIL).scope(OidcScopes.PROFILE)//.scope(OidcScopes.OPENID)
-                .scope("read_user_info")
+                .scope(OidcScopes.OPENID).scope("read_user_info")
 //                其它Scope
                 .scope("message.read")
                 .scope("message.write")
 //                JWT的配置项 包括TTL  是否复用refreshToken等等
-                .tokenSettings(TokenSettings.builder().build())
+                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofMinutes(55))
+                        .accessTokenFormat(OAuth2TokenFormat.REFERENCE)
+                        .build())
 //                配置客户端相关的配置项，包括验证密钥或者 是否需要授权页面
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
                 .build();

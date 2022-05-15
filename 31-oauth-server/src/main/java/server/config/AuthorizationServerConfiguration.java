@@ -176,16 +176,14 @@ public class AuthorizationServerConfiguration {
     @SneakyThrows
 //    @Bean
     public JWKSource<SecurityContext> jwkSource() {
-        //TODO 这里优化到配置
-        String path = "felordcn.jks";
-        String alias = "felordcn";
-        String pass = "123456";
+        String path = "oauthJwt.jks";
+        String alias = "oauthJwt";
 
         ClassPathResource resource = new ClassPathResource(path);
-        KeyStore jks = KeyStore.getInstance("jks");
-        char[] pin = pass.toCharArray();
-        jks.load(resource.getInputStream(), pin);
-        RSAKey rsaKey = RSAKey.load(jks, alias, pin);
+        KeyStore jks = KeyStore.getInstance("jks");//KeyStore.getDefaultType()
+        jks.load(resource.getInputStream(), "111111".toCharArray());
+
+        RSAKey rsaKey = RSAKey.load(jks, alias, "123456".toCharArray());
 
         JWKSet jwkSet = new JWKSet(rsaKey);
         return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);

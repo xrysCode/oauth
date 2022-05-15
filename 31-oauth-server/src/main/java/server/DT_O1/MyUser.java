@@ -1,4 +1,4 @@
-package server.dto;
+package server.DT_O1;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -6,7 +6,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -18,14 +17,20 @@ public class MyUser implements UserDetails {
 //        return Collections.singletonList(grantedAuthority);
         return  Collections.singletonList(new SimpleGrantedAuthority("grantedAuthority"));
     }
+
     String password;
     String username;
     String email;
+//    String sub;//oidc
 
     public MyUser(String username, String password, String email) {
         this.password = password;
         this.username = username;
         this.email = email;
+    }
+
+    public String getSub() {
+        return username;
     }
 
     @Override
